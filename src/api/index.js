@@ -26,4 +26,20 @@ export default {
       mock:true,
     });
   },
+  getUserList(params){
+    return request({  //要将请求回来的数据返回出去
+      url: "/users/list",
+      data: params,
+      method:'post',
+      mock:true,
+    });
+  },
+  userDel(params){
+    return request({  //要将请求回来的数据返回出去
+      url: "/users/delte",
+      data: params,
+      method:'post',
+      mock:true,
+    });
+  }
 };
