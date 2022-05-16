@@ -32,7 +32,9 @@
               @click="handleEdit(scope.row)"
               >编辑</el-button
             >
-            <el-button size="small">设置权限</el-button>
+            <el-button size="small" @click="powerEdit(scope.row)"
+              >设置权限</el-button
+            >
             <el-button
               @click="handleDel(scope.row._id)"
               size="small"
@@ -51,8 +53,8 @@
         @current-change="handleCurrentChange"
       />
     </div>
-
-    <el-dialog v-model="showModal" title="角色新增">
+    <!-- 角色新增弹框 -->
+    <el-dialog ialog v-model="showModal" title="角色新增">
       <el-form
         :model="roleForm"
         label-width="80"
@@ -77,20 +79,58 @@
         </span>
       </template>
     </el-dialog>
+    <!-- 权限编辑弹框 -->
+    <el-dialog v-model="showPower" title="权限编辑">
+      <el-form :model="powerForm" label-width="100">
+        <el-form-item label="角色名称" prop="roleName">
+          <el-input v-model="powerForm.roleName" disabled />
+        </el-form-item>
+        <el-form-item label="选择权限" prop="permissionList">
+          <el-tree
+            :data="menuList"
+            show-checkbox
+            node-key="_id"
+            ref="tree"
+            default-expand-all
+            :default-checked-keys="powerForm.permissionList.checkedKeys"
+            :props="defaultProps"
+          />
+        </el-form-item>
+      </el-form>
+      <template #footer>
+        <span class="dialog-footer">
+          <el-button @click="handlePowerClose">取 消</el-button>
+          <el-button type="primary" @click="handlePowerSubmit">确 定</el-button>
+        </span>
+      </template>
+    </el-dialog>
   </div>
 </template>
 
 <script>
+import { Key } from "@element-plus/icons";
+import { stringify } from "postcss";
 import utils from "./../utils/utils";
 export default {
   name: "role",
   data() {
     return {
+      showPower: false,
       showModal: false,
+      powerList: [],
       roleList: [],
+      powerForm: {
+        roleName: "",
+        permissionList: { checkedKeys: [], halfCheckedKeys: [] },
+      }, //权限表单内容
       roleForm: {
         roleName: "",
         remark: "",
+      },
+      menuList: [],
+      defaultProps: {
+        children: "children",
+        label: "menuName",
       },
       queryForm: {
         roleName: "",
@@ -113,8 +153,16 @@ export default {
           label: "备注",
         },
         {
-          prop: "menuType",
+          prop: "permissionList",
           label: "权限列表",
+          formatter: (row, column, value) => {
+            let names = [];
+            let list = value.halfCheckedKeys || [];
+            list.map((key) => {
+              if (key) names.push(this.actionMap[key]);
+            });
+            return names.join(",");
+          },
         },
         {
           prop: "createTime",
@@ -124,12 +172,51 @@ export default {
           },
         },
       ],
+      //   权限映射表
+      actionMap: {},
     };
   },
   mounted() {
     this.getRoleList();
+    this.getMenuList();
   },
   methods: {
+    async getMenuList() {
+      this.menuList = await this.$api.getMenuList({});
+    },
+    async handlePowerSubmit() {
+      const nodeList = this.$refs["tree"].getCheckedNodes();
+      const halfList = this.$refs["tree"].getHalfCheckedKeys();
+      const checkedList = [];
+      const parentList = [];
+      nodeList.map((node) => {
+        if (!!node.children) {
+          // 按钮
+          checkedList.push(node._id);
+        } else {
+          // 菜单管理
+          parentList.push(node._id);
+        }
+      });
+      let params = {
+        _id: this.powerForm._id,
+        promissionList: {
+          checkedList,
+          halfCheckedKeys: parentList.concat(halfList),
+        },
+      };
+      await this.$api.updataPermission(params);
+      this.showPower = false;
+      this.$message.success("权限设置成功");
+    },
+
+    handlePowerClose() {
+      this.showPower = false;
+    },
+    powerEdit(row) {
+      this.showPower = true;
+      this.powerForm = row;
+    },
     handleQuery() {
       this.getRoleList();
     },
@@ -154,14 +241,30 @@ export default {
         }
       });
     },
+    //拿权限展示
+    getActionMap(list) {
+      let actionMap = {};
+      let arr = JSON.parse(JSON.stringify(list));
+      while (arr.length) {
+        let item = arr.pop();
+        if (item.children && item.action) {
+          actionMap[item._id] = item.menuName;
+        }
+        if (item.children && !item.action) {
+          this.getActionMap(item.children);
+        }
+      }
+      this.actionMap = actionMap;
+    },
     //初始化列表
     async getRoleList() {
       try {
         const res = await this.$api.getRoleList(this.queryForm);
         this.roleList = res.list;
+        this.getActionMap(this.roleList);
         this.pager = res.page;
       } catch (error) {
-        throw new Error(e);
+        throw new Error(error);
       }
     },
     handleReset(form) {

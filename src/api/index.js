@@ -93,4 +93,12 @@ export default {
       mock: true,
     });
   },
+  updataPermission(params) {
+    return request({
+      url: "/roles/update/permission",
+      data: params,
+      method: "post",
+      mock: true,
+    });
+  },
 };
