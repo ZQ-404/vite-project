@@ -238,7 +238,7 @@ export default {
     const handleCreate = () => {
       action.value = "add";
       getDeptList();
-      getRoleList();
+      getRoleAllList();
       showModal.value = true;
     };
     const handleClose = () => {
@@ -296,11 +296,11 @@ export default {
       if (res.nModified > 0) {
         proxy.$message.success("删除成功");
         getUserList();
-      } else {
-        proxy.$message.error("删除失败");
-
-        getUserList();
+        return;
       }
+      proxy.$message.error("删除失败");
+
+      getUserList();
     };
     //监听table
     const handleSelectionChange = (list) => {
@@ -309,8 +309,8 @@ export default {
       });
     };
     //获取用户角色
-    const getRoleList = async () => {
-      roleList.value = await proxy.$api.getRoleList();
+    const getRoleAllList = async () => {
+      roleList.value = await proxy.$api.getRoleAllList();
     };
     //获取部门列表
     const getDeptList = async () => {
@@ -324,6 +324,8 @@ export default {
     //编辑
     const handleEdit = (row) => {
       action.value = "edit";
+      getDeptList();
+      getRoleAllList();
       showModal.value = true;
       proxy.$nextTick(() => {
         Object.assign(userForm, row);
@@ -349,7 +351,7 @@ export default {
       handleCurrentChange,
       handlePatch,
       handleSelectionChange,
-      getRoleList,
+      getRoleAllList,
       getDeptList,
       handleClose,
       handleSubmit,

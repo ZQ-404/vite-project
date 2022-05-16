@@ -20,11 +20,19 @@ export default {
       mock: true,
     });
   },
-  getMenuList() {
+  getMenuList(params) {
     return request({
       //要将请求回来的数据返回出去
       url: "/menu/list",
-      data: {},
+      data: params,
+      method: "get",
+    });
+  },
+  getRoleList(params) {
+    return request({
+      //要将请求回来的数据返回出去
+      url: "/roles/list",
+      data: params,
       method: "get",
       mock: true,
     });
@@ -35,7 +43,6 @@ export default {
       url: "/users/list",
       data: params,
       method: "get",
-      mock: true,
     });
   },
   userSumbit(params) {
@@ -43,10 +50,9 @@ export default {
       url: "/users/operate",
       data: params,
       method: "post",
-      mock: true,
     });
   },
-  getRoleList() {
+  getRoleAllList() {
     return request({
       //要将请求回来的数据返回出去
       url: "/roles/allList",
@@ -67,7 +73,21 @@ export default {
   userDel(params) {
     return request({
       //要将请求回来的数据返回出去
-      url: "/users/delte",
+      url: "/users/delete",
+      data: params,
+      method: "post",
+    });
+  },
+  menuSumbit(params) {
+    return request({
+      url: "/menu/operate",
+      data: params,
+      method: "post",
+    });
+  },
+  roleSumbit(params) {
+    return request({
+      url: "/roles/operate",
       data: params,
       method: "post",
       mock: true,

@@ -51,7 +51,7 @@
         </div>
       </div>
       <div class="wrapper">
-          <router-view></router-view>
+        <router-view></router-view>
       </div>
     </div>
   </div>
@@ -91,7 +91,7 @@ export default {
       if (key === "email") return;
       this.$store.commit("saveUserInfo", "");
       this.userInfo = null;
-      this.$router.push("./login");
+      this.$router.push("/login");
     },
     async getNoticeCount() {
       try {
@@ -192,3 +192,4 @@ export default {
   }
 }
 </style>
+

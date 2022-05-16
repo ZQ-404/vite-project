@@ -35,6 +35,7 @@
   </div>
 </template>
 <script>
+import md5 from "md5";
 import { User, View } from "@element-plus/icons";
 export default {
   name: "Login",
@@ -60,7 +61,11 @@ export default {
     login() {
       this.$refs.userForm.validate((valid) => {
         if (valid) {
-          this.$api.login(this.user).then((res) => {
+          let user = {
+            userName: this.user.userName,
+            userPwd: md5(this.user.userPwd),
+          };
+          this.$api.login(user).then((res) => {
             this.$store.commit("saveUserInfo", res);
             this.$router.push({ name: "welcome" });
           });
@@ -99,3 +104,4 @@ export default {
   }
 }
 </style>
+

@@ -60,8 +60,9 @@ function request(options) {
   if (options.method.toLowerCase() === "get") {
     options.params = options.data;
   }
+  let isMock = config.mock;
   if (typeof options.mock !== "undefined") {
-    config.mock = options.mock;
+    isMock = options.mock;
   }
   //判断生产环境
   if (config.dev === "production") {
@@ -69,7 +70,7 @@ function request(options) {
     service.defaults.baseURL = config.baseApi;
   } else {
     //如果不是生产环境，就判断mock是否为true
-    service.defaults.baseURL = config.mock ? config.mockApi : config.baseApi;
+    service.defaults.baseURL = isMock ? config.mockApi : config.baseApi;
   }
   return service(options);
 }
