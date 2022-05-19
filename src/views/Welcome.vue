@@ -2,7 +2,7 @@
   <div class="welcome">
     <div class="content">
       <div class="sub-title">欢迎体验</div>
-      <div class="title">火星通用管理系统</div>
+      <div class="title">地府通用管理系统</div>
       <div class="desc">
         -elementplus+vue3+Node+MongoDB打造火星后台管理系统-
       </div>
@@ -23,7 +23,6 @@ export default {
   height: 100%;
   background-color: #fff;
   .content {
-    
     position: relative;
     bottom: 40px;
     .sub-title {

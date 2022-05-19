@@ -46,8 +46,8 @@ export default {
   data() {
     return {
       user: {
-        userName: "",
-        userPwd: "",
+        userName: "张三",
+        userPwd: "123456",
       },
       rules: {
         userName: [

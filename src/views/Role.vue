@@ -54,7 +54,7 @@
       />
     </div>
     <!-- 角色新增弹框 -->
-    <el-dialog ialog v-model="showModal" title="角色新增">
+    <el-dialog v-model="showModal" title="角色新增">
       <el-form
         :model="roleForm"
         label-width="80"
@@ -119,6 +119,7 @@ export default {
       showModal: false,
       powerList: [],
       roleList: [],
+      testList: [],
       powerForm: {
         roleName: "",
         permissionList: { checkedKeys: [], halfCheckedKeys: [] },
@@ -153,22 +154,24 @@ export default {
           label: "备注",
         },
         {
-          prop: "permissionList",
-          label: "权限列表",
-          formatter: (row, column, value) => {
-            let names = [];
-            let list = value.halfCheckedKeys || [];
-            list.map((key) => {
-              if (key) names.push(this.actionMap[key]);
-            });
-            return names.join(",");
-          },
-        },
-        {
           prop: "createTime",
           label: "创建时间",
           formatter(row, column, value) {
             return utils.formateDate(new Date(value));
+          },
+        },
+        {
+          prop: "updateTime",
+          label: "修改时间",
+          formatter(row, column, value) {
+            return utils.formateDate(new Date(value));
+          },
+        },
+        {
+          prop: "permissionList",
+          label: "权限列表",
+          formatter: (row, column, value) => {
+            return this.getFormatter(value);
           },
         },
       ],
@@ -177,12 +180,26 @@ export default {
     };
   },
   mounted() {
-    this.getRoleList();
     this.getMenuList();
+    this.getRoleList();
   },
   methods: {
+    getFormatter(value) {
+      let names = [];
+      let list = value.checkedKeys || [];
+      list.map((key) => {
+        let name = this.actionMap[key];
+        if (key && name) names.push(name);
+      });
+      return names.join(",");
+    },
+    handleCurrentChange(current) {
+      this.pager.pageNum = current;
+      this.getRoleList();
+    },
     async getMenuList() {
       this.menuList = await this.$api.getMenuList({});
+      this.getActionMap(this.menuList);
     },
     async handlePowerSubmit() {
       const nodeList = this.$refs["tree"].getCheckedNodes();
@@ -200,13 +217,15 @@ export default {
       });
       let params = {
         _id: this.powerForm._id,
-        promissionList: {
-          checkedList,
+        permissionList: {
+          checkedKeys: checkedList,
           halfCheckedKeys: parentList.concat(halfList),
         },
       };
       await this.$api.updataPermission(params);
+      this.getRoleList();
       this.showPower = false;
+
       this.$message.success("权限设置成功");
     },
 
@@ -230,13 +249,13 @@ export default {
           try {
             let { action, roleForm } = this;
             let params = { ...roleForm, action };
-            let res = await this.$api.roleSumbit(params);
+            await this.$api.roleSumbit(params);
             this.showModal = false;
             this.$message.success("操作成功");
             this.handleReset("dialogForm");
             this.getRoleList();
           } catch (error) {
-            this.$message.fail("操作失败");
+            this.$message.error("操作失败");
           }
         }
       });
@@ -254,14 +273,17 @@ export default {
           this.getActionMap(item.children);
         }
       }
-      this.actionMap = actionMap;
+      //递归，会出现空值覆盖的现象，所以最好合并
+      this.actionMap = Object.assign(this.actionMap, actionMap);
     },
     //初始化列表
     async getRoleList() {
       try {
-        const res = await this.$api.getRoleList(this.queryForm);
+        const res = await this.$api.getRoleList({
+          ...this.queryForm,
+          ...this.pager,
+        });
         this.roleList = res.list;
-        this.getActionMap(this.roleList);
         this.pager = res.page;
       } catch (error) {
         throw new Error(error);

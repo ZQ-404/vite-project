@@ -34,7 +34,7 @@ export default {
       url: "/roles/list",
       data: params,
       method: "get",
-      mock: true,
+      // mock: true,
     });
   },
   getUserList(params) {
@@ -58,16 +58,24 @@ export default {
       url: "/roles/allList",
       data: {},
       method: "get",
-      mock: true,
     });
   },
-  getDeptList() {
+  getDeptList(params) {
     return request({
       //要将请求回来的数据返回出去
       url: "/dept/list",
-      data: {},
+      data: params,
       method: "get",
-      mock: true,
+      // mock: true,
+    });
+  },
+  deptOperate(params) {
+    return request({
+      //要将请求回来的数据返回出去
+      url: "/dept/operate",
+      data: params,
+      method: "post",
+      // mock: true,
     });
   },
   userDel(params) {
@@ -90,7 +98,6 @@ export default {
       url: "/roles/operate",
       data: params,
       method: "post",
-      mock: true,
     });
   },
   updataPermission(params) {
@@ -98,7 +105,14 @@ export default {
       url: "/roles/update/permission",
       data: params,
       method: "post",
-      mock: true,
+    });
+  },
+  getAllUserList(params) {
+    return request({
+      url: "/users/all/list",
+      data: params,
+      method: "get",
+      // mock: true,
     });
   },
 };

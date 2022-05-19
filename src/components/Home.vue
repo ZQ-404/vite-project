@@ -90,7 +90,7 @@ export default {
     handleLogout(key) {
       if (key === "email") return;
       this.$store.commit("saveUserInfo", "");
-      this.userInfo = null;
+      this.userInfo = {};
       this.$router.push("/login");
     },
     async getNoticeCount() {
