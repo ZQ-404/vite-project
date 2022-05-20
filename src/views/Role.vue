@@ -85,14 +85,13 @@
         <el-form-item label="角色名称" prop="roleName">
           <el-input v-model="powerForm.roleName" disabled />
         </el-form-item>
-        <el-form-item label="选择权限" prop="permissionList">
+        <el-form-item label="选择权限">
           <el-tree
             :data="menuList"
             show-checkbox
             node-key="_id"
             ref="tree"
             default-expand-all
-            :default-checked-keys="powerForm.permissionList.checkedKeys"
             :props="defaultProps"
           />
         </el-form-item>
@@ -108,8 +107,6 @@
 </template>
 
 <script>
-import { Key } from "@element-plus/icons";
-import { stringify } from "postcss";
 import utils from "./../utils/utils";
 export default {
   name: "role",
@@ -188,7 +185,8 @@ export default {
       let names = [];
       let list = value.halfCheckedKeys.concat(value.checkedKeys) || [];
       list.map((key) => {
-        let name = this.actionMap[key];
+        let actionMap = JSON.parse(JSON.stringify(this.actionMap));
+        let name = actionMap[key];
         if (key && name) names.push(name);
       });
       return names.join(",");
@@ -224,20 +222,21 @@ export default {
       };
       await this.$api.updataPermission(params);
       this.getRoleList();
-      this.showPower = false;
       this.handleReset("permissionForm");
+      this.showPower = false;
       this.$message.success("权限设置成功");
     },
 
     handlePowerClose() {
-      this.showPower = false;
       this.handleReset("permissionForm");
+      this.showPower = false;
     },
     powerEdit(row) {
       this.showPower = true;
-      this.$nextTick(() => {
-        Object.assign(this.powerForm, row);
-      });
+      this.powerForm = JSON.parse(JSON.stringify(row));
+      setTimeout(() => {
+        this.$refs.tree.setCheckedKeys(row.permissionList.checkedKeys);
+      }, 0);
     },
     handleQuery() {
       this.getRoleList();
