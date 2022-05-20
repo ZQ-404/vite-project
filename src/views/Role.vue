@@ -81,7 +81,7 @@
     </el-dialog>
     <!-- 权限编辑弹框 -->
     <el-dialog v-model="showPower" title="权限编辑">
-      <el-form :model="powerForm" label-width="100">
+      <el-form :model="powerForm" label-width="100" ref="permissionForm">
         <el-form-item label="角色名称" prop="roleName">
           <el-input v-model="powerForm.roleName" disabled />
         </el-form-item>
@@ -186,7 +186,7 @@ export default {
   methods: {
     getFormatter(value) {
       let names = [];
-      let list = value.checkedKeys || [];
+      let list = value.halfCheckedKeys.concat(value.checkedKeys) || [];
       list.map((key) => {
         let name = this.actionMap[key];
         if (key && name) names.push(name);
@@ -225,16 +225,19 @@ export default {
       await this.$api.updataPermission(params);
       this.getRoleList();
       this.showPower = false;
-
+      this.handleReset("permissionForm");
       this.$message.success("权限设置成功");
     },
 
     handlePowerClose() {
       this.showPower = false;
+      this.handleReset("permissionForm");
     },
     powerEdit(row) {
       this.showPower = true;
-      this.powerForm = row;
+      this.$nextTick(() => {
+        Object.assign(this.powerForm, row);
+      });
     },
     handleQuery() {
       this.getRoleList();

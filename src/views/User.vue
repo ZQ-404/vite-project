@@ -24,8 +24,15 @@
     </div>
     <div class="base-table">
       <div class="action">
-        <el-button type="primary" @click="handleCreate">新增</el-button>
-        <el-button type="danger" @click="handlePatch">批量删除</el-button>
+        <el-button type="primary" @click="handleCreate" v-has:add="'user-add'"
+          >新增</el-button
+        >
+        <el-button
+          type="danger"
+          @click="handlePatch"
+          v-has:add="'user-patch-delete'"
+          >批量删除</el-button
+        >
       </div>
       <el-table :data="userList" @selection-change="handleSelectionChange">
         <el-table-column type="selection" width="55" />

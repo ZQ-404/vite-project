@@ -36,15 +36,20 @@
             @click="handleAdd(2, scope.row)"
             size="small"
             type="primary"
+            v-has:add="'menu-create'"
             >新增</el-button
           >
-          <el-button @click="handleEdit(scope.row)" size="small"
+          <el-button
+            @click="handleEdit(scope.row)"
+            size="small"
+            v-has:add="'menu-edit'"
             >编辑</el-button
           >
           <el-button
             @click="handleDel(scope.row._id)"
             size="small"
             type="danger"
+            v-has:add="'menu-delete'"
             >删除</el-button
           >
         </template>

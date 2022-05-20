@@ -102,7 +102,10 @@ export default {
     },
     async getMenuList() {
       try {
-        this.userMenu = await this.$api.getPerssionList();
+        const { menuList, actionList } = await this.$api.getPerssionList();
+        this.userMenu = menuList;
+        this.$store.commit("saveUserMenu", menuList);
+        this.$store.commit("saveUserAction", actionList);
       } catch (error) {
         this.$message.error(error.message);
       }
