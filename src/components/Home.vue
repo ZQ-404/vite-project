@@ -102,7 +102,7 @@ export default {
     },
     async getMenuList() {
       try {
-        this.userMenu = await this.$api.getMenuList();
+        this.userMenu = await this.$api.getPerssionList();
       } catch (error) {
         this.$message.error(error.message);
       }

@@ -28,6 +28,14 @@ export default {
       method: "get",
     });
   },
+  getPerssionList() {
+    return request({
+      //要将请求回来的数据返回出去
+      url: "/users/getPerssionList",
+      data: {},
+      method: "get",
+    });
+  },
   getRoleList(params) {
     return request({
       //要将请求回来的数据返回出去
