@@ -1,5 +1,8 @@
 import { createRouter, createWebHashHistory } from "vue-router";
 import Home from "@/components/Home.vue";
+import utils from "../utils/utils";
+import storage from "@/utils/storage";
+import API from "@/api/index";
 const routes = [
   {
     name: "home",
@@ -18,38 +21,6 @@ const routes = [
         },
         component: () => import("@/views/Welcome.vue"),
       },
-      {
-        name: "user",
-        path: "/system/user",
-        meta: {
-          title: "用户管理",
-        },
-        component: () => import("@/views/User.vue"),
-      },
-      {
-        name: "menu",
-        path: "/system/menu",
-        meta: {
-          title: "菜单管理",
-        },
-        component: () => import("@/views/Menu.vue"),
-      },
-      {
-        name: "role",
-        path: "/system/role",
-        meta: {
-          title: "角色管理",
-        },
-        component: () => import("@/views/Role.vue"),
-      },
-      {
-        name: "dept",
-        path: "/system/dept",
-        meta: {
-          title: "部门管理",
-        },
-        component: () => import("@/views/Dept.vue"),
-      },
     ],
   },
   {
@@ -60,9 +31,48 @@ const routes = [
     },
     component: () => import("@/views/Login.vue"),
   },
+  {
+    name: "404",
+    path: "/404",
+    meta: {
+      title: "页面不存在",
+    },
+    component: () => import("@/views/404.vue"),
+  },
 ];
 const router = createRouter({
   history: createWebHashHistory(),
   routes,
+});
+async function loadAsyncRoutes() {
+  let userInfo = storage.getItem("userInfo") || {};
+  if (userInfo.token) {
+    try {
+      const { menuList } = await API.getPerssionList();
+
+      let routes = utils.generateRoute(menuList);
+      routes.map((route) => {
+        let url = `./../views/${route.component}.vue`;
+        route.component = () => import(url);
+        router.addRoute("home", route);
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  }
+}
+await loadAsyncRoutes();
+// 判断
+function checkPermission(path) {
+  return router.getRoutes().filter((route) => route.path === path).length;
+}
+//导航守卫
+router.beforeEach((to, from, next) => {
+  if (checkPermission(to.path)) {
+    document.title = to.meta.title;
+    next();
+  } else {
+    next("/404");
+  }
 });
 export default router;

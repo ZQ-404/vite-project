@@ -1,6 +1,7 @@
 /**
  * 工具函数封装
  */
+
 export default {
   formateDate(date, rule) {
     let fmt = rule || "yyyy-MM-dd hh:mm:ss";
@@ -24,5 +25,28 @@ export default {
       }
     }
     return fmt;
+  },
+  generateRoute(list) {
+    let routes = [];
+    const deepList = (list) => {
+      while (list.length) {
+        let item = list.pop();
+        if (item.action) {
+          routes.push({
+            name: item.component,
+            path: item.path,
+            meta: {
+              title: item.menuName,
+            },
+            component: item.component,
+          });
+        }
+        if (item.children && !item.action) {
+          deepList(item.children);
+        }
+      }
+    };
+    deepList(list);
+    return routes;
   },
 };
