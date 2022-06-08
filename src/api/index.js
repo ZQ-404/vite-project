@@ -123,4 +123,20 @@ export default {
       // mock: true,
     });
   },
+  getApplyList(params) {
+    return request({
+      url: "/leave/list",
+      data: params,
+      method: "get",
+      mock: true,
+    });
+  },
+  leaveOperate(params) {
+    return request({
+      url: "/leave/operate",
+      method: "post",
+      data: params,
+      mock: true,
+    });
+  },
 };

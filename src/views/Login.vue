@@ -68,29 +68,30 @@ export default {
           };
           this.$api.login(user).then(async (res) => {
             this.$store.commit("saveUserInfo", res);
-            async function loadAsyncRoutes() {
-              let userInfo = storage.getItem("userInfo") || {};
-              if (userInfo.token) {
-                try {
-                  const { menuList } = await API.getPerssionList();
-
-                  let routes = utils.generateRoute(menuList);
-                  routes.map((route) => {
-                    let url = `./../views/${route.component}.vue`;
-                    route.component = () => import(url);
-                    router.addRoute("home", route);
-                  });
-                } catch (error) {
-                  console.log(error);
-                }
-              }
-            }
+            this.loadAsyncRoutes();
             this.$router.push({ name: "welcome" });
           });
         } else {
           return false;
         }
       });
+    },
+    async loadAsyncRoutes() {
+      let userInfo = storage.getItem("userInfo") || {};
+      if (userInfo.token) {
+        try {
+          const { menuList } = await API.getPerssionList();
+
+          let routes = utils.generateRoute(menuList);
+          routes.map((route) => {
+            let url = `./../views/${route.component}.vue`;
+            route.component = () => import(/* @vite-ignore */ url);
+            router.addRoute("home", route);
+          });
+        } catch (error) {
+          console.log(error);
+        }
+      }
     },
   },
 };
