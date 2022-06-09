@@ -302,14 +302,11 @@ export default {
     };
     //休假
     const leaveOperate = async () => {
-      let res = await proxy.$api.leaveOperate(params.value);
-      if (res) {
-        showModal.value = false;
-        action.value === "create" &&
-          proxy.$message.success("休假申请提交成功!");
-        action.value === "delete" &&
-          proxy.$message.success("休假申请作废成功!");
-      }
+      await proxy.$api.leaveOperate(params.value);
+
+      showModal.value = false;
+      action.value === "create" && proxy.$message.success("休假申请提交成功!");
+      action.value === "delete" && proxy.$message.success("休假申请作废成功!");
     };
     //休假时间计算
     const handleDateChange = (key, value) => {
