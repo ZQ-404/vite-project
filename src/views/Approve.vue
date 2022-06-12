@@ -255,6 +255,10 @@ export default {
             proxy.$message.success("操作成功");
             handleClose();
             getApplyList();
+            proxy.$store.commit(
+              "saveNoticeCount",
+              ctx.$store.state.noticeCount - 1
+            );
           } catch (error) {
             proxy.$message.error(error);
           }

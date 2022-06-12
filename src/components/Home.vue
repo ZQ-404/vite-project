@@ -32,6 +32,7 @@
             :is-dot="noticeCount > 0 ? true : false"
             class="notice"
             type="danger"
+            @click="$router.push('/audit/approve')"
           >
             <el-icon><bell /></el-icon>
           </el-badge>
@@ -79,6 +80,11 @@ export default {
       activeMenu: location.hash.slice(1), //激活的菜单index
     };
   },
+  computed: {
+    noticeCount() {
+      return this.$store.state.noticeCount;
+    },
+  },
   mounted() {
     this.getNoticeCount();
     this.getMenuList();
@@ -95,9 +101,10 @@ export default {
     },
     async getNoticeCount() {
       try {
-        this.noticeCount = await this.$api.noticeCount({});
+        const count = await this.$api.noticeCount();
+        this.$store.commit("saveNoticeCount", count);
       } catch (error) {
-        this.$message.error(error.message);
+        console.error(error);
       }
     },
     async getMenuList() {

@@ -17,7 +17,7 @@ export default {
       url: "/leave/count",
       data: {},
       method: "get",
-      mock: true,
+      // mock: true,
     });
   },
   getMenuList(params) {
