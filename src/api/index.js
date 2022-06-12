@@ -139,4 +139,12 @@ export default {
       // mock: true,
     });
   },
+  leaveApprove(params) {
+    return request({
+      url: "/leave/approve",
+      method: "post",
+      data: params,
+      // mock: true,
+    });
+  },
 };

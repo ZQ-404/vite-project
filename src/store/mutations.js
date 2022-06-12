@@ -6,6 +6,7 @@ export default {
   saveUserInfo(state, userInfo) {
     state.userInfo = userInfo;
     storage.setItem("userInfo", userInfo);
+    localStorage.setItem("userInfo", JSON.stringify(userInfo));
   },
   saveUserMenu(state, menuList) {
     state.menuList = menuList;

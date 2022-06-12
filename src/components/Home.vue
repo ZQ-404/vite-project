@@ -73,7 +73,7 @@ export default {
   data() {
     return {
       isCollapse: false,
-      userInfo: this.$store.state.userInfo,
+      userInfo: JSON.parse(window.localStorage.getItem("userInfo")),
       noticeCount: 0,
       userMenu: [],
       activeMenu: location.hash.slice(1), //激活的菜单index

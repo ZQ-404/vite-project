@@ -133,7 +133,7 @@
         <el-step title="审批通过/审批拒绝/作废"></el-step>
       </el-steps>
       <el-form label-width="120px" label-suffix=":">
-        <el-form-item label="休假类型">{{ detail.applyName }}</el-form-item>
+        <el-form-item label="休假类型">{{ detail.applyTypeName }}</el-form-item>
         <el-form-item label="休假时间">{{ detail.time }}</el-form-item>
         <el-form-item label="休假时长">{{ detail.leaveTime }}</el-form-item>
         <el-form-item label="休假原因">{{ detail.reasons }}</el-form-item>
